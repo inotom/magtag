@@ -24,5 +24,5 @@ Use xml tag (adding close slash). 0: not using, 1: using (default)
 Usage
 =======
 ```vim
-:ImgTag hoge.jpg
+:MagTag hoge.jpg
 ```

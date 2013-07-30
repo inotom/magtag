@@ -1,7 +1,7 @@
 " magtag.vim
 "
 " file created in 2013/04/08 00:04:06.
-" LastUpdated :2013/07/30 09:30:38.
+" LastUpdated :2013/07/30 11:14:49.
 " Author: iNo
 " Version: 1.0
 " Licence: MIT license
@@ -16,14 +16,14 @@
 " Insert img tag position. 0: after cursor (default), 1: before cursor
 "
 " Usage:
-" :MagTag hoge.jpg
+" :MagTagErb hoge.jpg
 "
 
 if !exists('g:magtag_insert_pos')
   let g:magtag_insert_pos = 0
 endif
 
-command! -nargs=1 -complete=file -bang MagTag call s:insertImgTag('<f-args>')
+command! -nargs=1 -complete=file -bang MagTagErb call s:insertImgTag('<f-args>')
 
 function! s:getInsertPos()
   if g:magtag_insert_pos == 0
@@ -34,7 +34,7 @@ function! s:getInsertPos()
 endfunction
 
 function! s:insertImgTag(imgfile)
-  let imgTag = system('identify -format "<%= image_tag \"' . a:imgfile . '\", :width => %w, :height => %h :alt => \"\"" "' . a:imgfile . '"')
+  let imgTag = system('identify -format "<\%= image_tag ''' . a:imgfile . ''', :width => %w, :height => %h :alt => ''''" "' . a:imgfile . '"')
 
   if matchend(imgTag, '<%= image_tag ') < 0
     echo a:imgfile . ' not found!'

@@ -1,7 +1,7 @@
 " magtag.vim
 "
 " file created in 2013/04/08 00:04:06.
-" LastUpdated :2013/07/30 11:14:49.
+" LastUpdated :2013/07/30 11:18:18.
 " Author: iNo
 " Version: 1.0
 " Licence: MIT license
@@ -34,7 +34,7 @@ function! s:getInsertPos()
 endfunction
 
 function! s:insertImgTag(imgfile)
-  let imgTag = system('identify -format "<\%= image_tag ''' . a:imgfile . ''', :width => %w, :height => %h :alt => ''''" "' . a:imgfile . '"')
+  let imgTag = system('identify -format "<\%= image_tag ''' . a:imgfile . ''', :width => %w, :height => %h, :alt => '''' \%>" "' . a:imgfile . '"')
 
   if matchend(imgTag, '<%= image_tag ') < 0
     echo a:imgfile . ' not found!'

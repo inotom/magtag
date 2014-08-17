@@ -1,7 +1,7 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2014/08/17 17:47:10.
+" LastUpdated:2014/08/17 18:16:49.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.0
 " License: MIT License {{{
@@ -91,7 +91,7 @@ endfunction
 function! s:insertEruby(imgFile)
   let tagStr = system('identify -format "<\%= ' . g:magtag_eruby_helper_tag . ' ''/' . a:imgFile . ''', :width => %w, :height => %h, :alt => '''' \%>" "' . a:imgFile . '"')
 
-  if matchend(tagStr, '<%= ' g:magtag_eruby_helper_tag . ' ') < 0
+  if matchend(tagStr, '<%= ' . g:magtag_eruby_helper_tag . ' ') < 0
     throw 'File not found: ' . a:imgFile
     finish
   endif

@@ -1,7 +1,7 @@
 "
 " File: plugin/magtag.vim
 " file created in 2014/08/17 14:40:13.
-" LastUpdated:2014/08/17 17:47:19.
+" LastUpdated:2014/08/18 09:35:19.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.0
 " License: MIT License {{{
@@ -48,7 +48,7 @@ if !exists('g:magtag_eruby_helper_tag')
   let g:magtag_eruby_helper_tag = 'image_tag'
 endif
 
-command! -nargs=1 -complete=file -bang Magtag call magtag#insertTag('<f-args>')
+command! -nargs=1 -complete=file Magtag call magtag#insertTag('<f-args>')
 
 
 let &cpo = s:save_cpo

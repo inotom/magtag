@@ -1,7 +1,7 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2014/08/18 09:34:54.
+" LastUpdated:2014/08/18 15:32:06.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.0
 " License: MIT License {{{
@@ -45,7 +45,7 @@ function! magtag#insertTag(imgFile)
       call s:insertHtml(a:imgFile)
     endif
   catch /^File not found: .*/
-    echo v:exception
+    echoe v:exception
   finally
   endtry
 endfunction

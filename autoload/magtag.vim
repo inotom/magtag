@@ -1,7 +1,7 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2014/08/18 09:33:52.
+" LastUpdated:2014/08/18 09:34:54.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.0
 " License: MIT License {{{
@@ -55,11 +55,7 @@ function! s:getInsertPos()
 endfunction
 
 function! s:getCloseTag()
-  if g:magtag_use_xml == 0
-    return '>'
-  else
-    return ' />'
-  endif
+  return g:magtag_use_xml == 0 ? '>' : ' />'
 endfunction
 
 function! s:insertHtml(imgFile)

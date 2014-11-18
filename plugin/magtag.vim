@@ -1,9 +1,9 @@
 "
 " File: plugin/magtag.vim
 " file created in 2014/08/17 14:40:13.
-" LastUpdated:2014/08/18 09:35:19.
+" LastUpdated:2014/11/18 12:56:20.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 2.0
+" Version: 2.1
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the

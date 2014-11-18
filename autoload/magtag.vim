@@ -1,9 +1,9 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2014/11/18 11:54:37.
+" LastUpdated:2014/11/18 12:55:09.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 2.0
+" Version: 2.1
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the

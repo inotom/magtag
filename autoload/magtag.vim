@@ -1,7 +1,7 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2014/08/18 15:32:06.
+" LastUpdated:2014/11/18 11:54:37.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.0
 " License: MIT License {{{
@@ -58,8 +58,42 @@ function! s:getCloseTag()
   return g:magtag_use_xml == 0 ? '>' : ' />'
 endfunction
 
+function! s:getImageSize(imgFile)
+  let size = []
+
+  if executable('awk')
+    if executable('sips')
+      let size = split(system("sips -g pixelWidth -g pixelHeight " . a:imgFile . " | awk '/pixelWidth|pixelHeight/ {printf $2\"\t\"}'"), "\t")
+    elseif executable('identify')
+      let size = split(system("identify " . a:imgFile . " | awk '{printf $3}'"), "x")
+    else
+      throw 'sips or identify command required!'
+      finish
+    endif
+  endif
+
+  return size
+endfunction
+
+function! s:getTag(imgFile, fileType)
+  let tagStr = ''
+  let size = s:getImageSize(a:imgFile)
+
+  if len(size) == 2
+    if a:fileType ==# 'html'
+      let tagStr = '<img src=' . a:imgFile . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
+    elseif a:fileType ==# 'slim'
+      let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . a:imgFile . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => ""'
+    elseif a:fileType ==# 'eruby'
+      let tagStr = '<%= ' . g:magtag_eruby_helper_tag . ' ' . a:imgFile . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => "" %>'
+    endif
+  endif
+
+  return tagStr
+endfunction
+
 function! s:insertHtml(imgFile)
-  let tagStr = system('identify -format "<img src=\"' . a:imgFile . '\" width=\"%w\" height=\"%h\" alt=\"\"' . s:getCloseTag() . '" "' . a:imgFile . '"')
+  let tagStr = s:getTag(a:imgFile, 'html')
 
   if matchend(tagStr, '<img src=') < 0
     throw 'File not found: ' . a:imgFile
@@ -70,7 +104,7 @@ function! s:insertHtml(imgFile)
 endfunction
 
 function! s:insertSlim(imgFile)
-  let tagStr = system('identify -format "= ' . g:magtag_eruby_helper_tag . ' ''/' . a:imgFile . ''', :width => %w, :height => %h, :alt => ''''" "' . a:imgFile . '"')
+  let tagStr = s:getTag(a:imgFile, 'slim')
 
   if matchend(tagStr, '= ' . g:magtag_eruby_helper_tag . ' ') < 0
     throw 'File not found: ' . a:imgFile
@@ -81,7 +115,7 @@ function! s:insertSlim(imgFile)
 endfunction
 
 function! s:insertEruby(imgFile)
-  let tagStr = system('identify -format "<\%= ' . g:magtag_eruby_helper_tag . ' ''/' . a:imgFile . ''', :width => %w, :height => %h, :alt => '''' \%>" "' . a:imgFile . '"')
+  let tagStr = s:getTag(a:imgFile, 'eruby')
 
   if matchend(tagStr, '<%= ' . g:magtag_eruby_helper_tag . ' ') < 0
     throw 'File not found: ' . a:imgFile

@@ -1,7 +1,7 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2014/11/18 12:55:09.
+" LastUpdated:2015/02/23 13:54:19.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.1
 " License: MIT License {{{
@@ -62,7 +62,9 @@ function! s:getImageSize(imgFile)
   let size = []
 
   if executable('awk')
-    if executable('sips')
+    if executable('imgsize')
+      let size = split(system("imgsize -n " . a:imgFile), ",")
+    elseif executable('sips')
       let size = split(system("sips -g pixelWidth -g pixelHeight " . a:imgFile . " | awk '/pixelWidth|pixelHeight/ {printf $2\"\t\"}'"), "\t")
     elseif executable('identify')
       let size = split(system("identify " . a:imgFile . " | awk '{printf $3}'"), "x")

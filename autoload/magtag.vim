@@ -1,9 +1,9 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2015/02/23 18:36:04.
+" LastUpdated:2015/05/07 11:52:11.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 2.2
+" Version: 2.3
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the
@@ -77,6 +77,10 @@ function! s:getImageSize(imgFile)
   return size
 endfunction
 
+function! s:absPath(imgFile)
+  return '"/' . substitute(a:imgFile, '\v^"(\.\/|\.\.\/)*', "", "")
+endfunction
+
 function! s:getTag(imgFile, fileType)
   let tagStr = ''
   let size = s:getImageSize(a:imgFile)
@@ -85,9 +89,9 @@ function! s:getTag(imgFile, fileType)
     if a:fileType ==# 'html'
       let tagStr = '<img src=' . a:imgFile . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
     elseif a:fileType ==# 'slim'
-      let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . a:imgFile . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => ""'
+      let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => ""'
     elseif a:fileType ==# 'eruby'
-      let tagStr = '<%= ' . g:magtag_eruby_helper_tag . ' ' . a:imgFile . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => "" %>'
+      let tagStr = '<%= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => "" %>'
     endif
   endif
 

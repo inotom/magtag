@@ -1,7 +1,7 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2015/05/07 11:52:11.
+" LastUpdated:2016/02/04 17:42:23.
 " Author: iNo <wdf7322@yahoo.co.jp>
 " Version: 2.3
 " License: MIT License {{{
@@ -89,9 +89,9 @@ function! s:getTag(imgFile, fileType)
     if a:fileType ==# 'html'
       let tagStr = '<img src=' . a:imgFile . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
     elseif a:fileType ==# 'slim'
-      let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => ""'
+      let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', width: ' . size[0] . ', height: ' . size[1] . ', alt: ""'
     elseif a:fileType ==# 'eruby'
-      let tagStr = '<%= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', :width => ' . size[0] . ', :height => ' . size[1] . ', :alt => "" %>'
+      let tagStr = '<%= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', width: ' . size[0] . ', height: ' . size[1] . ', alt: "" %>'
     endif
   endif
 

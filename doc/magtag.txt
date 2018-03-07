@@ -1,6 +1,6 @@
 *magtag.txt*	Insert img tag with width and height property.
 
-Version: 2.3
+Version: 2.4
 Author: iNo <wdf7322@yahoo.co.jp>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
@@ -30,6 +30,7 @@ Options	|magtag-options|
 	Insert position	|magtag-insert-pos|
 	Use xml	|magtag-use-xml|
 	eRuby helper tag	|magtag-eruby-helper-tag|
+	PHP function name	|magtag-php-function-name|
 Usage	|magtag-usage|
 Changelog	|magtag-changelog|
 
@@ -57,6 +58,11 @@ g:magtag_eruby_helper_tag	*magtag-eruby-helper-tag*
 
 To change eruby image_tag helper function string.
 
+--------------------------------------------------
+g:magtag_php_function_name	*magtag-php-function-name*
+
+To change php the_img function name.
+
 ==================================================
 USAGE	*magtag-usage*
 
@@ -64,6 +70,10 @@ USAGE	*magtag-usage*
 
 ==================================================
 CHANGELOG	*magtag-changelog*
+
+2018/3/7
+- Ver 2.4
+  Modify to insert the_img php function
 
 2015/5/7
 - Ver 2.3

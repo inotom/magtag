@@ -25,6 +25,11 @@ g:magtag_eruby_helper_tag
 ```
 To change eruby image_tag helper function string.
 
+```vim
+g:magtag_php_function_name
+```
+To change php `the_img` function name.
+
 Usage
 =======
 ```vim

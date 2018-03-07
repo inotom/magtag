@@ -1,9 +1,9 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2016/02/04 17:42:23.
+" LastUpdated:2018/03/07 20:48:36.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 2.3
+" Version: 2.4
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the
@@ -37,6 +37,8 @@ function! magtag#insertTag(imgFile)
   try
     if &filetype ==# 'html'
       call s:insertHtml(a:imgFile)
+    elseif &filetype ==# 'php'
+      call s:insertPhp(a:imgFile)
     elseif &filetype ==# 'slim'
       call s:insertSlim(a:imgFile)
     elseif &filetype ==# 'eruby'
@@ -81,6 +83,10 @@ function! s:absPath(imgFile)
   return '"/' . substitute(a:imgFile, '\v^"(\.\/|\.\.\/)*', "", "")
 endfunction
 
+function! s:thePhpPath(imgFile)
+  return '"<?php ' . g:magtag_php_function_name . '( ' . substitute(s:absPath(a:imgFile), '\v"', "'", "g") . ' ); ?>"'
+endfunction
+
 function! s:getTag(imgFile, fileType)
   let tagStr = ''
   let size = s:getImageSize(a:imgFile)
@@ -88,6 +94,8 @@ function! s:getTag(imgFile, fileType)
   if len(size) == 2
     if a:fileType ==# 'html'
       let tagStr = '<img src=' . a:imgFile . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
+    elseif a:fileType ==# 'php'
+      let tagStr = '<img src=' . s:thePhpPath(a:imgFile) . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
     elseif a:fileType ==# 'slim'
       let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', width: ' . size[0] . ', height: ' . size[1] . ', alt: ""'
     elseif a:fileType ==# 'eruby'
@@ -108,6 +116,18 @@ function! s:insertHtml(imgFile)
 
   call s:insertTag(tagStr)
 endfunction
+
+function! s:insertPhp(imgFile)
+  let tagStr = s:getTag(a:imgFile, 'php')
+
+  if matchend(tagStr, '<img src=') < 0
+    throw 'File not found: ' . a:imgFile
+    finish
+  endif
+
+  call s:insertTag(tagStr)
+endfunction
+
 
 function! s:insertSlim(imgFile)
   let tagStr = s:getTag(a:imgFile, 'slim')

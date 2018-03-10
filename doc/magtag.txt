@@ -1,6 +1,6 @@
 *magtag.txt*	Insert img tag with width and height property.
 
-Version: 2.4
+Version: 3.0
 Author: iNo <wdf7322@yahoo.co.jp>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
@@ -49,19 +49,24 @@ g:magtag_insert_pos	*magtag-insert-pos*
 Insert img tag position. 0: after cursor (default), 1: before cursor
 
 --------------------------------------------------
-g:magtag_use_xml	*magtag-use-xml*
+g:magtag_html_template	*magtag-html-template*
 
-Use xml tag (adding close slash). 0: not using, 1: using (default)
-
---------------------------------------------------
-g:magtag_eruby_helper_tag	*magtag-eruby-helper-tag*
-
-To change eruby image_tag helper function string.
+Template for html image tag
 
 --------------------------------------------------
-g:magtag_php_function_name	*magtag-php-function-name*
+g:magtag_php_template	*magtag-php-template*
 
-To change php the_img function name.
+Template for php image tag
+
+--------------------------------------------------
+g:magtag_slim_template	*magtag-slim-template*
+
+Template for slim image tag
+
+--------------------------------------------------
+g:magtag_eruby_template	*magtag-eruby-template*
+
+Template for eruby image tag
 
 ==================================================
 USAGE	*magtag-usage*
@@ -70,6 +75,11 @@ USAGE	*magtag-usage*
 
 ==================================================
 CHANGELOG	*magtag-changelog*
+
+2018/3/10
+- Ver 3.0
+  Add template options
+  Remove some options
 
 2018/3/7
 - Ver 2.4

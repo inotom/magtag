@@ -1,9 +1,9 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2018/03/07 20:48:36.
+" LastUpdated:2018/03/10 14:13:50.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 2.4
+" Version: 3.0
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the
@@ -33,18 +33,19 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! magtag#insertTag(imgFile)
+function! magtag#insertTag(imageFile)
+  let imgFile = substitute(a:imageFile, '\v(^"|"$)', "", "g")
   try
     if &filetype ==# 'html'
-      call s:insertHtml(a:imgFile)
+      call s:insertHtml(imgFile)
     elseif &filetype ==# 'php'
-      call s:insertPhp(a:imgFile)
+      call s:insertPhp(imgFile)
     elseif &filetype ==# 'slim'
-      call s:insertSlim(a:imgFile)
+      call s:insertSlim(imgFile)
     elseif &filetype ==# 'eruby'
-      call s:insertEruby(a:imgFile)
+      call s:insertEruby(imgFile)
     else
-      call s:insertHtml(a:imgFile)
+      call s:insertHtml(imgFile)
     endif
   catch /^File not found: .*/
     echoe v:exception
@@ -56,8 +57,19 @@ function! s:getInsertPos()
   return g:magtag_insert_pos == 0 ? 'a' : 'i'
 endfunction
 
-function! s:getCloseTag()
-  return g:magtag_use_xml == 0 ? '>' : ' />'
+function! s:getDimentionCount(templateStr)
+  return len(split(a:templateStr, '%d', 1)) - 1
+endfunction
+
+function! s:makeTagStr(templateStr, imgPath, size)
+  let dimCount = s:getDimentionCount(a:templateStr)
+  if dimCount == 1
+    return printf(a:templateStr, a:imgPath, a:size[0])
+  elseif dimCount == 2
+    return printf(a:templateStr, a:imgPath, a:size[0], a:size[1])
+  else
+    return printf(a:templateStr, a:imgPath)
+  endif
 endfunction
 
 function! s:getImageSize(imgFile)
@@ -80,11 +92,7 @@ function! s:getImageSize(imgFile)
 endfunction
 
 function! s:absPath(imgFile)
-  return '"/' . substitute(a:imgFile, '\v^"(\.\/|\.\.\/)*', "", "")
-endfunction
-
-function! s:thePhpPath(imgFile)
-  return '"<?php ' . g:magtag_php_function_name . '( ' . substitute(s:absPath(a:imgFile), '\v"', "'", "g") . ' ); ?>"'
+  return '/' . substitute(a:imgFile, '\v^(\.\/|\.\.\/)*', "", "")
 endfunction
 
 function! s:getTag(imgFile, fileType)
@@ -93,13 +101,13 @@ function! s:getTag(imgFile, fileType)
 
   if len(size) == 2
     if a:fileType ==# 'html'
-      let tagStr = '<img src=' . a:imgFile . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
+      let tagStr = s:makeTagStr(g:magtag_html_template, a:imgFile, size)
     elseif a:fileType ==# 'php'
-      let tagStr = '<img src=' . s:thePhpPath(a:imgFile) . ' width="' . size[0] . '" height="' . size[1] . '" alt=""' . s:getCloseTag()
+      let tagStr = s:makeTagStr(g:magtag_php_template, s:absPath(a:imgFile), size)
     elseif a:fileType ==# 'slim'
-      let tagStr = '= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', width: ' . size[0] . ', height: ' . size[1] . ', alt: ""'
+      let tagStr = s:makeTagStr(g:magtag_slim_template, s:absPath(a:imgFile), size)
     elseif a:fileType ==# 'eruby'
-      let tagStr = '<%= ' . g:magtag_eruby_helper_tag . ' ' . s:absPath(a:imgFile) . ', width: ' . size[0] . ', height: ' . size[1] . ', alt: "" %>'
+      let tagStr = s:makeTagStr(g:magtag_eruby_template, s:absPath(a:imgFile), size)
     endif
   endif
 
@@ -109,7 +117,7 @@ endfunction
 function! s:insertHtml(imgFile)
   let tagStr = s:getTag(a:imgFile, 'html')
 
-  if matchend(tagStr, '<img src=') < 0
+  if match(tagStr, '<img ') != 0
     throw 'File not found: ' . a:imgFile
     finish
   endif
@@ -120,7 +128,7 @@ endfunction
 function! s:insertPhp(imgFile)
   let tagStr = s:getTag(a:imgFile, 'php')
 
-  if matchend(tagStr, '<img src=') < 0
+  if match(tagStr, '<img ') != 0
     throw 'File not found: ' . a:imgFile
     finish
   endif
@@ -128,11 +136,10 @@ function! s:insertPhp(imgFile)
   call s:insertTag(tagStr)
 endfunction
 
-
 function! s:insertSlim(imgFile)
   let tagStr = s:getTag(a:imgFile, 'slim')
 
-  if matchend(tagStr, '= ' . g:magtag_eruby_helper_tag . ' ') < 0
+  if matchend(tagStr, '= ') != 0
     throw 'File not found: ' . a:imgFile
     finish
   endif
@@ -143,7 +150,7 @@ endfunction
 function! s:insertEruby(imgFile)
   let tagStr = s:getTag(a:imgFile, 'eruby')
 
-  if matchend(tagStr, '<%= ' . g:magtag_eruby_helper_tag . ' ') < 0
+  if match(tagStr, '<%= ') != 0
     throw 'File not found: ' . a:imgFile
     finish
   endif

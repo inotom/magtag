@@ -16,19 +16,25 @@ g:magtag_insert_pos
 Insert img tag position. 0: after cursor (default), 1: before cursor
 
 ```vim
-g:magtag_use_xml
+g:magtag_html_template
 ```
-Use xml tag (adding close slash). 0: not using, 1: using (default)
+Template for html image tag
 
 ```vim
-g:magtag_eruby_helper_tag
+g:magtag_php_template
 ```
-To change eruby image_tag helper function string.
+Template for php image tag
 
 ```vim
-g:magtag_php_function_name
+g:magtag_slim_template
 ```
-To change php `the_img` function name.
+Template for slim image tag
+
+```vim
+g:magtag_eruby_template
+```
+Template for eruby image tag
+
 
 Usage
 =======

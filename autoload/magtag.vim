@@ -1,9 +1,9 @@
 "
 " File: autoload/magtag.vim
 " file created in 2014/08/17 13:53:45.
-" LastUpdated:2018/03/10 14:13:50.
+" LastUpdated:2018/03/11 11:42:23.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 3.0
+" Version: 3.1
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the
@@ -33,20 +33,24 @@ endif
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! magtag#insertTag(imageFile)
-  let imgFile = substitute(a:imageFile, '\v(^"|"$)', "", "g")
+let s:check_prefixes = {
+\ 'html': '<img ',
+\ 'php': '<img ',
+\ 'slim': '= ',
+\ 'eruby': '<%= ',
+\}
+
+let s:templates = {
+\ 'html': g:magtag_html_template,
+\ 'php': g:magtag_php_template,
+\ 'slim': g:magtag_slim_template,
+\ 'eruby': g:magtag_eruby_template,
+\}
+
+function! magtag#insertTag(fpath)
+  let imgPath = substitute(a:fpath, '\v(^"|"$)', "", "g")
   try
-    if &filetype ==# 'html'
-      call s:insertHtml(imgFile)
-    elseif &filetype ==# 'php'
-      call s:insertPhp(imgFile)
-    elseif &filetype ==# 'slim'
-      call s:insertSlim(imgFile)
-    elseif &filetype ==# 'eruby'
-      call s:insertEruby(imgFile)
-    else
-      call s:insertHtml(imgFile)
-    endif
+    call s:insertTag(imgPath, &filetype)
   catch /^File not found: .*/
     echoe v:exception
   finally
@@ -61,27 +65,38 @@ function! s:getDimentionCount(templateStr)
   return len(split(a:templateStr, '%d', 1)) - 1
 endfunction
 
-function! s:makeTagStr(templateStr, imgPath, size)
-  let dimCount = s:getDimentionCount(a:templateStr)
+function! s:makeTagStr(imgPath, fileType)
+  let templateStr = s:getTemplateStr(a:fileType)
+  let imgSrc = s:getImageSrc(a:imgPath, a:fileType)
+  let dimCount = s:getDimentionCount(templateStr)
+  let size = s:getImageSize(a:imgPath, dimCount)
+
   if dimCount == 1
-    return printf(a:templateStr, a:imgPath, a:size[0])
+    return printf(templateStr, imgSrc, size[0])
   elseif dimCount == 2
-    return printf(a:templateStr, a:imgPath, a:size[0], a:size[1])
+    return printf(templateStr, imgSrc, size[0], size[1])
   else
-    return printf(a:templateStr, a:imgPath)
+    return printf(templateStr, imgSrc)
   endif
 endfunction
 
-function! s:getImageSize(imgFile)
+function! s:getImageSize(imgPath, dimentionCount)
+  if a:dimentionCount > 0
+    return s:readImageSize(a:imgPath)
+  endif
+  return [0, 0]
+endfunction
+
+function! s:readImageSize(imgPath)
   let size = []
 
   if executable('awk')
     if executable('sips')
-      let size = split(system("sips -g pixelWidth -g pixelHeight " . a:imgFile . " | awk '/pixelWidth|pixelHeight/ {printf $2\"\t\"}'"), "\t")
+      let size = split(system("sips -g pixelWidth -g pixelHeight " . a:imgPath . " | awk '/pixelWidth|pixelHeight/ {printf $2\"\t\"}'"), "\t")
     elseif executable('imgsize')
-      let size = split(system("imgsize -n " . a:imgFile), ",")
+      let size = split(system("imgsize -n " . a:imgPath), ",")
     elseif executable('identify')
-      let size = split(system("identify " . a:imgFile . " | awk '{printf $3}'"), "x")
+      let size = split(system("identify " . a:imgPath . " | awk '{printf $3}'"), "x")
     else
       throw 'sips or identify command required!'
       finish
@@ -91,75 +106,37 @@ function! s:getImageSize(imgFile)
   return size
 endfunction
 
-function! s:absPath(imgFile)
-  return '/' . substitute(a:imgFile, '\v^(\.\/|\.\.\/)*', "", "")
+function! s:absPath(imgPath)
+  return '/' . substitute(a:imgPath, '\v^(\.\/|\.\.\/)*', "", "")
 endfunction
 
-function! s:getTag(imgFile, fileType)
-  let tagStr = ''
-  let size = s:getImageSize(a:imgFile)
-
-  if len(size) == 2
-    if a:fileType ==# 'html'
-      let tagStr = s:makeTagStr(g:magtag_html_template, a:imgFile, size)
-    elseif a:fileType ==# 'php'
-      let tagStr = s:makeTagStr(g:magtag_php_template, s:absPath(a:imgFile), size)
-    elseif a:fileType ==# 'slim'
-      let tagStr = s:makeTagStr(g:magtag_slim_template, s:absPath(a:imgFile), size)
-    elseif a:fileType ==# 'eruby'
-      let tagStr = s:makeTagStr(g:magtag_eruby_template, s:absPath(a:imgFile), size)
-    endif
+function! s:getTemplateStr(fileType)
+  if has_key(s:templates, a:fileType)
+    return s:templates[a:fileType]
   endif
-
-  return tagStr
+  return s:templates['html']
 endfunction
 
-function! s:insertHtml(imgFile)
-  let tagStr = s:getTag(a:imgFile, 'html')
+function! s:getImageSrc(imgPath, fileType)
+  if a:fileType ==# 'html'
+    return a:imgPath
+  endif
+  return s:absPath(a:imgPath)
+endfunction
 
-  if match(tagStr, '<img ') != 0
-    throw 'File not found: ' . a:imgFile
+function! s:isValidTag(tagStr, fileType)
+  return has_key(s:check_prefixes, a:fileType) && match(a:tagStr, s:check_prefixes[a:fileType]) != 0
+endfunction
+
+function! s:insertTag(imgPath, fileType)
+  let tagStr = s:makeTagStr(a:imgPath, a:fileType)
+
+  if s:isValidTag(tagStr, a:fileType)
+    throw 'File not found: ' . a:imgPath
     finish
   endif
 
-  call s:insertTag(tagStr)
-endfunction
-
-function! s:insertPhp(imgFile)
-  let tagStr = s:getTag(a:imgFile, 'php')
-
-  if match(tagStr, '<img ') != 0
-    throw 'File not found: ' . a:imgFile
-    finish
-  endif
-
-  call s:insertTag(tagStr)
-endfunction
-
-function! s:insertSlim(imgFile)
-  let tagStr = s:getTag(a:imgFile, 'slim')
-
-  if matchend(tagStr, '= ') != 0
-    throw 'File not found: ' . a:imgFile
-    finish
-  endif
-
-  call s:insertTag(tagStr)
-endfunction
-
-function! s:insertEruby(imgFile)
-  let tagStr = s:getTag(a:imgFile, 'eruby')
-
-  if match(tagStr, '<%= ') != 0
-    throw 'File not found: ' . a:imgFile
-    finish
-  endif
-
-  call s:insertTag(tagStr)
-endfunction
-
-function! s:insertTag(tagStr)
-  execute ':normal ' . s:getInsertPos() . a:tagStr
+  execute ':normal ' . s:getInsertPos() . tagStr
   call setpos('.', getpos('.'))
 endfunction
 

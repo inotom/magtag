@@ -1,15 +1,14 @@
-magtag
-=======
+# magtag
 
 Insert img tag with width and height property.
 
-Installation
-=======
+## Installation
+
 Put this plugin files into $HOME/.vim directory.
 This plugin is required ImageMagick.
 
-Options
-=======
+## Options
+
 ```vim
 g:magtag_insert_pos
 ```
@@ -35,9 +34,18 @@ g:magtag_eruby_template
 ```
 Template for eruby image tag
 
+### Sample configs
 
-Usage
-=======
+```vim
+let g:magtag_html_template = '<img src="%s" width="%d" height="%d" alt="">'
+let g:magtag_php_template = '<img src="<?php the_img( ''%s'' ); ?>" width="%d" height="%d" alt="">'
+let g:magtag_slim_template = '= image_tag "%s", width: %d, height: "%d", alt=""'
+let g:magtag_eruby_template = '<%%= image_tag "%s", width: %d, height: "%d", alt="" %%>'
+```
+
+
+## Usage
+
 ```vim
 :MagTag hoge.jpg
 ```

@@ -39,8 +39,8 @@ Template for eruby image tag
 ```vim
 let g:magtag_html_template = '<img src="%s" width="%d" height="%d" alt="">'
 let g:magtag_php_template = '<img src="<?php the_img( ''%s'' ); ?>" width="%d" height="%d" alt="">'
-let g:magtag_slim_template = '= image_tag "%s", width: %d, height: "%d", alt=""'
-let g:magtag_eruby_template = '<%%= image_tag "%s", width: %d, height: "%d", alt="" %%>'
+let g:magtag_slim_template = '= image_tag "%s", width: %d, height: "%d", alt: ""'
+let g:magtag_eruby_template = '<%%= image_tag "%s", width: %d, height: "%d", alt: "" %%>'
 ```
 
 

@@ -1,6 +1,6 @@
 *magtag.txt*	Insert img tag with width and height property.
 
-Version: 3.2
+Version: 3.3
 Author: iNo <wdf7322@yahoo.co.jp>
 License: MIT license  {{{
     Permission is hereby granted, free of charge, to any person obtaining
@@ -75,6 +75,10 @@ USAGE	*magtag-usage*
 
 ==================================================
 CHANGELOG	*magtag-changelog*
+
+2018/4/16
+- Ver 3.3
+  Fix eruby and slim template
 
 2018/3/11
 - Ver 3.1

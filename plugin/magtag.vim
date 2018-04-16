@@ -1,9 +1,9 @@
 "
 " File: plugin/magtag.vim
 " file created in 2014/08/17 14:40:13.
-" LastUpdated:2018/03/14 09:24:20.
+" LastUpdated:2018/04/16 14:09:29.
 " Author: iNo <wdf7322@yahoo.co.jp>
-" Version: 3.2
+" Version: 3.3
 " License: MIT License {{{
 "   Permission is hereby granted, free of charge, to any person obtaining
 "   a copy of this software and associated documentation files (the
@@ -49,11 +49,11 @@ if !exists('g:magtag_php_template')
 endif
 
 if !exists('g:magtag_slim_template')
-  let g:magtag_slim_template = '= image_tag "%s", width: %d, height: "%d", alt: ""'
+  let g:magtag_slim_template = '= image_tag "%s", width: %d, height: %d, alt: ""'
 endif
 
 if !exists('g:magtag_eruby_template')
-  let g:magtag_eruby_template = '<%%= image_tag "%s", width: %d, height: "%d", alt: "" %%>'
+  let g:magtag_eruby_template = '<%%= image_tag "%s", width: %d, height: %d, alt: "" %%>'
 endif
 
 command! -nargs=1 -complete=file Magtag call magtag#insertTag('<f-args>')
